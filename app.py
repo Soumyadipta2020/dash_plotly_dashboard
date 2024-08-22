@@ -97,9 +97,7 @@ app.layout = [
 def update_graph(selected_column, selected_entries, selected_plot):
     if not selected_entries:
         raise dash.exceptions.PreventUpdate
-    
     filtered_df = df[df['Country'].isin(selected_entries)]
-
     if selected_plot == 'Line Plot':
         fig = px.line(filtered_df, x = 'Country', y = selected_column, title = 'Country vs Index')
     elif selected_plot == 'Violin Plot':
