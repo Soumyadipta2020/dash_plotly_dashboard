@@ -64,7 +64,7 @@ app.layout = [
         html.Div([
             html.Label("Index Type",  style = {'fontWeight': 'bold'}),
             dcc.Dropdown(options=[{'label': col, 'value': col} for col in column_names],
-                     value=column_names[0],
+                     value=[column_names[0]],
                      id='col-dropdown', multi=True, clearable=False, 
                      placeholder = 'Index Type')
         ], style={'width': '28%', 'display': 'inline-block'}),
@@ -77,7 +77,7 @@ app.layout = [
         ], style={'width': '48%', 'display': 'inline-block', 'paddingLeft': '10px'}),
         html.Div([
             html.Label("Plot Type",  style = {'fontWeight': 'bold'}),
-            dcc.Dropdown(options=['Line Plot', 'Violin Plot', 'Bar Plot'],
+            dcc.Dropdown(options=['Line Plot', 'Violin Plot', 'Bar Plot', 'Pie Plot'],
                      value='Line Plot',
                      id='plot-dropdown', multi=False, clearable=False, 
                      placeholder = 'Plot Type')
@@ -104,6 +104,25 @@ def update_graph(selected_column, selected_entries, selected_plot):
         fig = px.violin(filtered_df, y = selected_column, box = True, title = 'Indices')
     elif selected_plot == 'Bar Plot':
         fig = px.bar(filtered_df, x = 'Country', y = selected_column, title = 'Country vs Index', barmode='group')
+    elif selected_plot == 'Pie Plot':
+        num_cols = len(selected_column)
+        fig = make_subplots(
+            rows=1, cols=num_cols,
+            specs=[[{'type': 'domain'} for _ in range(num_cols)]],
+            subplot_titles=selected_column
+        )
+        for i, column in enumerate(selected_column):
+            if column not in filtered_df.columns:
+                continue
+            grouped_df = filtered_df.groupby('Country')[column].sum().reset_index()
+            if grouped_df.empty:
+                continue
+            pie = go.Pie(labels=grouped_df['Country'], values=grouped_df[column], name=column)
+            fig.add_trace(pie, row=1, col=i+1)
+        fig.update_layout(
+            title='Cost of Living Indices by Country',
+            showlegend=True
+        )
     return fig
 
 # Run app
