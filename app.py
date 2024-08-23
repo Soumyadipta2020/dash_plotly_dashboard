@@ -101,9 +101,9 @@ def update_graph(selected_column, selected_entries, selected_plot):
     if selected_plot == 'Line Plot':
         fig = px.line(filtered_df, x = 'Country', y = selected_column, title = 'Country vs Index')
     elif selected_plot == 'Violin Plot':
-        fig = px.violin(filtered_df, y = selected_column, box = True, title = 'Indices')
+        fig = px.violin(filtered_df, y = selected_column, box = True, title = 'Distribution of Index')
     elif selected_plot == 'Bar Plot':
-        fig = px.bar(filtered_df, x = 'Country', y = selected_column, title = 'Country vs Index', barmode='group')
+        fig = px.bar(filtered_df, x = 'Country', y = selected_column, title = 'Index by Country', barmode='group')
     elif selected_plot == 'Pie Plot':
         num_cols = len(selected_column)
         fig = make_subplots(
@@ -120,7 +120,7 @@ def update_graph(selected_column, selected_entries, selected_plot):
             pie = go.Pie(labels=grouped_df['Country'], values=grouped_df[column], name=column)
             fig.add_trace(pie, row=1, col=i+1)
         fig.update_layout(
-            title='Cost of Living Indices by Country',
+            title='Indices for Country',
             showlegend=True
         )
     return fig
